@@ -1,43 +1,51 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron'
 
 const electronAPI = {
-  invoke: async (data: unknown): Promise<unknown> => {
-    if (!data || typeof data !== 'object') {
-      throw new Error('Invalid data');
-    }
-    
-    return ipcRenderer.invoke('secure-invoke', data);
-  },
-
+  platform: process.platform,
   send: (channel: string, data: unknown): void => {
-    const validChannels = ['channel1', 'channel2'];
-    
+    const validChannels = ['window-control']
     if (validChannels.includes(channel)) {
-      ipcRenderer.send(channel, data);
-    } else {
-      throw new Error(`Invalid channel: ${channel}`);
+      ipcRenderer.send(channel, data)
     }
   },
-  on: (channel: string, callback: (data: unknown) => void): void => {
-    const validChannels = ['response1', 'response2'];
-    
-    if (validChannels.includes(channel)) {
-      // Wrap callback to prevent exposing event object
-      ipcRenderer.on(channel, (_event, data) => callback(data));
-    } else {
-      throw new Error(`Invalid channel: ${channel}`);
-    }
+  onWindowMaximized: (callback: () => void) => {
+    ipcRenderer.on('window-maximized', (_event) => callback())
   },
-  removeListener: (channel: string, callback: (data: unknown) => void): void => {
-    const validChannels = ['response1', 'response2'];
-    if (validChannels.includes(channel)) {
-      ipcRenderer.removeListener(channel, callback);
-    }
+  onWindowUnmaximized: (callback: () => void) => {
+    ipcRenderer.on('window-unmaximized', (_event) => callback())
   },
-};
+}
+
+const githubAPI = {
+  initialize: (token: string) => ipcRenderer.invoke('github:initialize', token),
+  getInProgress: () => ipcRenderer.invoke('github:getInProgress'),
+  getAll: () => ipcRenderer.invoke('github:getAll'),
+  sync: () => ipcRenderer.invoke('github:sync'),
+  getDetails: (notificationId: string) =>
+    ipcRenderer.invoke('github:getDetails', notificationId),
+  markAsRead: (notificationId: string) =>
+    ipcRenderer.invoke('github:markAsRead', notificationId),
+  markAsDone: (notificationId: string) =>
+    ipcRenderer.invoke('github:markAsDone', notificationId),
+  markAsUnread: (notificationId: string) =>
+    ipcRenderer.invoke('github:markAsUnread', notificationId),
+  setPriority: (notificationId: string, priority: number) =>
+    ipcRenderer.invoke('github:setPriority', notificationId, priority),
+  getStats: () => ipcRenderer.invoke('github:getStats'),
+}
+
+const tokenAPI = {
+  get: () => ipcRenderer.invoke('token:get'),
+  save: (token: string) => ipcRenderer.invoke('token:save', token),
+  delete: () => ipcRenderer.invoke('token:delete'),
+}
 
 // Security: Expose only the defined API, nothing else
-contextBridge.exposeInMainWorld('electronAPI', electronAPI);
+contextBridge.exposeInMainWorld('electronAPI', electronAPI)
+contextBridge.exposeInMainWorld('githubAPI', githubAPI)
+contextBridge.exposeInMainWorld('tokenAPI', tokenAPI)
 
 // Security: Prevent any modifications to the exposed API
-Object.freeze(electronAPI);
+Object.freeze(electronAPI)
+Object.freeze(githubAPI)
+Object.freeze(tokenAPI)
