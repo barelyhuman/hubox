@@ -1,5 +1,5 @@
 import { describe, it } from "mocha";
-import { NotificationManager } from "./index";
+import { NotificationManager } from "./index.js";
 import { expect } from "chai";
 
 describe("NotificationManager", () => {

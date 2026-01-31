@@ -1,17 +1,18 @@
 import { Octokit } from "@octokit/rest";
-import fetchCached from "fetch-cached";
+import { RequestCache } from "./request-cache.js";
+import _fetchCached from "fetch-cached";
+import type { Fetcher } from "../types.js";
 
-const cacheStore = new Map();
+const fetchCached = "default" in _fetchCached ? _fetchCached.default : _fetchCached;
 
+const ttl = 5 * 60 * 1000;
+const cacheStore = new RequestCache(ttl);
 const request: Fetcher = fetchCached({
   fetch: fetch,
-  cache: {
-    get: async (k) => cacheStore.get(k),
-    set: async (k, v) => cacheStore.set(k, v),
-  },
+  cache: cacheStore,
 });
 
-type HuBoxNotification = {
+export type HuBoxNotification = {
   id: string;
   reason: string;
 };

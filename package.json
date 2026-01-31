@@ -2,12 +2,12 @@
   "name": "hubox",
   "version": "1.0.0",
   "description": "",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "build": "node scripts/build.js",
     "start": "pnpm run build && electron .",
     "dev": "NODE_ENV=development pnpm run build && electron .",
-    "test": "ts-mocha src/**/*.spec.ts"
+    "test": "./node_modules/.bin/mocha --import=ts-node-maintained/esm"
   },
   "keywords": [
     "electron",
@@ -31,6 +31,7 @@
     "mocha": "^11.7.5",
     "ts-mocha": "^11.1.0",
     "ts-node": "^10.9.2",
+    "ts-node-maintained": "^10.9.6",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3"
   }

@@ -8,7 +8,7 @@
 - [ ] github-store
   - [ ] Should work offline
   - [ ] Sync more issues when online
-  - [ ] Should show the newest unread 10 first
-        - [ ] Be able to see everything if necessary
-  - [ ] Fetch the comments and everything from the particular github id 
+  - [x] Should show the newest unread 10 first
+  - [ ] Be able to fetch all if needed
+  - [ ] Fetch the comments and everything from the particular github id
 
