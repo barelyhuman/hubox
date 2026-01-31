@@ -1,0 +1,37 @@
+{
+  "name": "hubox",
+  "version": "1.0.0",
+  "description": "Secure Electron Application",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "start": "pnpm run build && electron .",
+    "dev": "NODE_ENV=development pnpm run build && electron .",
+    "test": "ts-mocha src/**/*.spec.ts"
+  },
+  "keywords": [
+    "electron",
+    "secure"
+  ],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.19.0",
+  "dependencies": {
+    "@octokit/rest": "^22.0.1",
+    "electron": "^40.1.0",
+    "fetch-cached": "^2.0.3"
+  },
+  "devDependencies": {
+    "@types/chai": "^5.2.3",
+    "@types/expect": "^24.3.2",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.5",
+    "chai": "^6.2.2",
+    "esbuild": "^0.27.2",
+    "mocha": "^11.7.5",
+    "ts-mocha": "^11.1.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.3"
+  }
+}
