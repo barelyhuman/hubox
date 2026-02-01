@@ -8,6 +8,8 @@
     "noImplicitAny": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true

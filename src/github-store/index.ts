@@ -40,6 +40,7 @@ export type NotificationDetails = {
 type StorageData = {
   notifications: HuBoxNotification[]
   lastSync: number
+  activeBatchIds: string[]
   customStates: Record<
     string,
     {
@@ -55,6 +56,7 @@ export class NotificationManager {
   private okit: Octokit
   private inProgressNotifications: HuBoxNotification[] = []
   private allNotifications: HuBoxNotification[] = []
+  private activeBatchIds: string[] = []
   private customStates: Map<
     string,
     {
@@ -65,8 +67,8 @@ export class NotificationManager {
     }
   > = new Map()
   private storageFile: string
-  private isOnline: boolean = true
-  private lastSyncTime: number = 0
+  private isOnline = true
+  private lastSyncTime = 0
   private cacheStore: RequestCache
 
   constructor(
@@ -98,6 +100,7 @@ export class NotificationManager {
 
   async resetStorage(): Promise<void> {
     this.allNotifications = []
+    this.activeBatchIds = []
     this.inProgressNotifications = []
     this.customStates.clear()
     this.lastSyncTime = 0
@@ -130,6 +133,7 @@ export class NotificationManager {
 
       this.allNotifications = parsed.notifications || []
       this.lastSyncTime = parsed.lastSync || 0
+      this.activeBatchIds = parsed.activeBatchIds || []
       this.customStates = new Map(Object.entries(parsed.customStates || {}))
 
       // Apply custom states to notifications
@@ -152,9 +156,11 @@ export class NotificationManager {
       const data: StorageData = {
         notifications: this.allNotifications,
         lastSync: this.lastSyncTime,
+        activeBatchIds: this.activeBatchIds,
         customStates: Object.fromEntries(this.customStates),
       }
 
+      await fs.mkdir(path.dirname(this.storageFile), { recursive: true })
       await fs.writeFile(
         this.storageFile,
         JSON.stringify(data, null, 2),
@@ -166,13 +172,31 @@ export class NotificationManager {
   }
 
   private updateInProgressList(): void {
-    // Get unread notifications that aren't marked as done, sorted by updated_at
-    this.inProgressNotifications = this.allNotifications
+    // Maintain a rolling inbox of up to `maxActive` notifications.
+    // Only include notifications that are NOT done and of type 'Issue'.
+
+    // 1. Build a sorted pool of available Issue notifications that are not done
+    const availableNotDone = this.allNotifications
+      .filter(n => !n.isDone && n.subject.type === 'Issue')
       .sort(
-        (a, b) =>
-          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       )
-      .slice(0, this.maxActive)
+
+    // 2. Keep any currently active items that are still valid (not done and still exist)
+    const activeSet = new Set(this.activeBatchIds)
+    const remainingActive = availableNotDone.filter(n => activeSet.has(n.id))
+
+    // 3. Fill up the active list up to `maxActive` with the newest available items
+    const newActive: typeof this.inProgressNotifications = [...remainingActive]
+    for (const n of availableNotDone) {
+      if (newActive.length >= this.maxActive) break
+      if (newActive.find(x => x.id === n.id)) continue
+      newActive.push(n)
+    }
+
+    // 4. Persist active ids and in-progress notifications
+    this.activeBatchIds = newActive.map(n => n.id)
+    this.inProgressNotifications = newActive
   }
 
   async getInProgress(): Promise<HuBoxNotification[]> {
@@ -226,7 +250,24 @@ export class NotificationManager {
         }
       }
 
-      this.allNotifications = allNotifications
+      // Merge with existing, preserving custom states
+      const notifMap = new Map(this.allNotifications.map(n => [n.id, n]))
+
+      allNotifications.forEach(newNotif => {
+        const existing = notifMap.get(newNotif.id)
+        if (existing) {
+          // Update notification data but preserve custom state
+          Object.assign(newNotif, {
+            isRead: existing.isRead,
+            isDone: existing.isDone,
+            priority: existing.priority,
+            lastViewedAt: existing.lastViewedAt,
+          })
+        }
+        notifMap.set(newNotif.id, newNotif)
+      })
+
+      this.allNotifications = Array.from(notifMap.values())
       this.lastSyncTime = Date.now()
       this.isOnline = true
       this.updateInProgressList()
@@ -373,6 +414,7 @@ export class NotificationManager {
         priority: notification.priority,
         lastViewedAt: notification.lastViewedAt,
       })
+      this.updateInProgressList()
       await this.saveToStorage()
     }
   }

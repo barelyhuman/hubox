@@ -11,7 +11,7 @@ A robust offline-first notification manager for GitHub notifications in Electron
 - **Custom Read State**: Maintain your own read/unread state independent of GitHub's state
 - **Priority Management**: Assign custom priorities to notifications
 - **Done State**: Mark notifications as "done" to remove them from your active list
-- **In-Progress View**: Shows the newest unread 10 notifications by default (configurable)
+- **In-Progress View**: Shows up to `maxActive` newest **Issue** notifications by default (configurable). The inbox is rolling — when an item is marked as done it is removed and replaced by the next available Issue so the inbox stays filled (up to the configured limit).
 - **Fetch All**: Ability to fetch all notifications from GitHub
 - **Rich Details**: Fetch complete issue/PR details including comments
 - **Persistent Cache**: Both notifications and HTTP requests are cached to disk
@@ -158,6 +158,7 @@ All data is stored in the Electron user data directory:
 - **Notifications**: `github-notifications.json`
   - All notifications with custom states
   - Last sync timestamp
+  - Current in-progress inbox ids (`activeBatchIds`) so the rolling inbox is persisted
   - Custom state mappings
 
 - **Request Cache**: `request-cache.json`
