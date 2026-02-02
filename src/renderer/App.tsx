@@ -70,6 +70,7 @@ export const App = () => {
           setScreen('token-setup')
           return
         }
+        await initializeApp(token)
         setScreen('app')
       })
       .catch(() => {
