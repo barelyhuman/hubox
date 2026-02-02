@@ -14,10 +14,16 @@ export function registerGithubAPI(
     }
     const storagePath = app.getPath('userData')
     notificationManager = new NotificationManager(token, 10, storagePath)
-
-    await notificationManager.resetStorage()
     await notificationManager.validateToken()
 
+    return { success: true }
+  })
+
+  ipcMain.handle('github:updateToken', async (event, token: string) => {
+    const storagePath = app.getPath('userData')
+    notificationManager = new NotificationManager(token, 10, storagePath)
+    await notificationManager.resetStorage()
+    await notificationManager.validateToken()
     return { success: true }
   })
 

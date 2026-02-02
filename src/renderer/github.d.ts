@@ -51,6 +51,7 @@ declare global {
     }
     githubAPI: {
       initialize: (token: string) => Promise<{ success: boolean }>
+      updateToken: (token: string) => Promise<{ success: boolean }>
       getInProgress: () => Promise<HuBoxNotification[]>
       getAll: () => Promise<HuBoxNotification[]>
       sync: () => Promise<void>

@@ -27,6 +27,9 @@ importers:
         specifier: ^10.28.3
         version: 10.28.3
     devDependencies:
+      '@barelyhuman/prettier-config':
+        specifier: ^2.0.2
+        version: 2.0.2
       '@electron-forge/cli':
         specifier: ^7.11.1
         version: 7.11.1(encoding@0.1.13)
@@ -87,6 +90,9 @@ importers:
       mocha:
         specifier: ^11.7.5
         version: 11.7.5
+      prettier:
+        specifier: ^3.8.1
+        version: 3.8.1
       ts-node-maintained:
         specifier: ^10.9.6
         version: 10.9.6(@types/node@25.1.0)(typescript@4.5.5)
@@ -194,6 +200,10 @@ packages:
   '@babel/types@7.29.0':
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==, tarball: https://registry.npmjs.org/@babel/types/-/types-7.29.0.tgz}
     engines: {node: '>=6.9.0'}
+
+  '@barelyhuman/prettier-config@2.0.2':
+    resolution: {integrity: sha512-ES+UvAEoRgQ/tymiU3Kqd2L1ltnTezLdecFdqdNvleS4Xv/87Rpjp7yO19OabCkLwcu6SCExYv23cQ4R0YBHww==, tarball: https://registry.npmjs.org/@barelyhuman/prettier-config/-/prettier-config-2.0.2.tgz}
+    hasBin: true
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==, tarball: https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz}
@@ -3864,6 +3874,8 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
+
+  '@barelyhuman/prettier-config@2.0.2': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:

@@ -9,15 +9,17 @@ const electronAPI = {
     }
   },
   onWindowMaximized: (callback: () => void) => {
-    ipcRenderer.on('window-maximized', (_event) => callback())
+    ipcRenderer.on('window-maximized', _event => callback())
   },
   onWindowUnmaximized: (callback: () => void) => {
-    ipcRenderer.on('window-unmaximized', (_event) => callback())
+    ipcRenderer.on('window-unmaximized', _event => callback())
   },
 }
 
 const githubAPI = {
   initialize: (token: string) => ipcRenderer.invoke('github:initialize', token),
+  updateToken: (token: string) =>
+    ipcRenderer.invoke('github:updateToken', token),
   getInProgress: () => ipcRenderer.invoke('github:getInProgress'),
   getAll: () => ipcRenderer.invoke('github:getAll'),
   sync: () => ipcRenderer.invoke('github:sync'),

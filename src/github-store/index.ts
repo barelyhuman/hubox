@@ -75,7 +75,8 @@ export class NotificationManager {
     token: string,
     private maxActive: number,
     storagePath: string,
-    cacheTTL: number = 5 * 60 * 1000
+    cacheTTL: number = 5 * 60 * 1000,
+    { fetch = globalThis.fetch } = {}
   ) {
     // Initialize request cache
     this.cacheStore = new RequestCache(cacheTTL, storagePath)
@@ -179,7 +180,8 @@ export class NotificationManager {
     const availableNotDone = this.allNotifications
       .filter(n => !n.isDone && n.subject.type === 'Issue')
       .sort(
-        (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        (a, b) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       )
 
     // 2. Keep any currently active items that are still valid (not done and still exist)
@@ -437,8 +439,8 @@ export class NotificationManager {
 
       // Optionally mark as read on GitHub too
       try {
-        await this.okit.activity.markThreadAsRead({
-          thread_id: parseInt(notificationId),
+        await this.okit.activity.markThreadAsDone({
+          thread_id: notificationId,
         })
       } catch (error) {
         console.error('Failed to mark as read on GitHub:', error)
