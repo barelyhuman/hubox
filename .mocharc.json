@@ -1,6 +1,0 @@
-{
-  "extension": ["ts"],
-  "reporter": "spec",
-  "spec": ["src/**/*.spec.ts"],
-  "loader": "ts-node-maintained/esm"
-}
