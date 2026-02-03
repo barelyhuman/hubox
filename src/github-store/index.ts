@@ -250,13 +250,15 @@ export class NotificationManager {
 
       allNotifications.forEach(newNotif => {
         const existing = notifMap.get(newNotif.id)
-        if (existing) {
-          // Update notification data but preserve custom state
+        const customState = this.customStates.get(newNotif.id)
+
+        // Preserve custom states from either existing notification or customStates map
+        if (existing || customState) {
           Object.assign(newNotif, {
-            isRead: existing.isRead,
-            isDone: existing.isDone,
-            priority: existing.priority,
-            lastViewedAt: existing.lastViewedAt,
+            isRead: customState?.isRead ?? existing?.isRead,
+            isDone: customState?.isDone ?? existing?.isDone,
+            priority: customState?.priority ?? existing?.priority,
+            lastViewedAt: customState?.lastViewedAt ?? existing?.lastViewedAt,
           })
         }
         notifMap.set(newNotif.id, newNotif)
@@ -289,13 +291,15 @@ export class NotificationManager {
 
       newNotifications.forEach(newNotif => {
         const existing = notifMap.get(newNotif.id)
-        if (existing) {
-          // Update notification data but preserve custom state
+        const customState = this.customStates.get(newNotif.id)
+
+        // Preserve custom states from either existing notification or customStates map
+        if (existing || customState) {
           Object.assign(newNotif, {
-            isRead: existing.isRead,
-            isDone: existing.isDone,
-            priority: existing.priority,
-            lastViewedAt: existing.lastViewedAt,
+            isRead: customState?.isRead ?? existing?.isRead,
+            isDone: customState?.isDone ?? existing?.isDone,
+            priority: customState?.priority ?? existing?.priority,
+            lastViewedAt: customState?.lastViewedAt ?? existing?.lastViewedAt,
           })
         }
         notifMap.set(newNotif.id, newNotif)
