@@ -479,6 +479,30 @@ body {
   color: var(--green);
 }
 
+.detail-state-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.detail-state-badge--open {
+  background: var(--green-subtle);
+  color: var(--green);
+}
+
+.detail-state-badge--merged {
+  background: var(--purple-subtle);
+  color: var(--purple);
+}
+
+.detail-state-badge--closed {
+  background: var(--red-subtle);
+  color: var(--red);
+}
+
 .detail-time {
   font-size: 12px;
   color: var(--text-tertiary);

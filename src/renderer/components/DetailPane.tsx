@@ -15,6 +15,24 @@ function getHtmlUrl(details: NotificationDetails | null): string | null {
   return item?.html_url ?? null
 }
 
+function getPRState(
+  details: NotificationDetails | null
+): { label: string; state: string } | null {
+  if (!details?.pullRequest) return null
+
+  const pr = details.pullRequest
+  if (pr.merged) {
+    return { label: 'Merged', state: 'merged' }
+  }
+  if (pr.state === 'closed') {
+    return { label: 'Closed', state: 'closed' }
+  }
+  if (pr.state === 'open') {
+    return { label: 'Open', state: 'open' }
+  }
+  return null
+}
+
 export function DetailPane({ notification, details, onMarkDone }: Props) {
   if (!notification) {
     return (
@@ -29,6 +47,7 @@ export function DetailPane({ notification, details, onMarkDone }: Props) {
 
   const n = notification
   const htmlUrl = getHtmlUrl(details)
+  const prState = getPRState(details)
 
   return (
     <section class="detail-pane detail-pane--open">
@@ -43,6 +62,13 @@ export function DetailPane({ notification, details, onMarkDone }: Props) {
         <div class="detail-repo">{n.repository.full_name}</div>
       </div>
       <div class="detail-meta-bar">
+        {prState && (
+          <span
+            class={`detail-state-badge detail-state-badge--${prState.state}`}
+          >
+            {prState.label}
+          </span>
+        )}
         <span class={`detail-reason-badge detail-reason-badge--${n.reason}`}>
           {reasonLabel(n.reason)}
         </span>

@@ -99,29 +99,6 @@ export const App = () => {
     }
   }, [activeView, screen, loadData])
 
-  // Fetch details when selection changes
-  useEffect(() => {
-    if (!selectedId) {
-      setDetails(null)
-      return
-    }
-    let cancelled = false
-    ;(async () => {
-      try {
-        const [det] = await Promise.all([
-          window.githubAPI.getDetails(selectedId),
-          window.githubAPI.markAsRead(selectedId),
-        ])
-        if (!cancelled) setDetails(det)
-      } catch (err) {
-        console.error('Failed to load details:', err)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [selectedId])
-
   const handleTokenSaved = useCallback(
     async (token: string) => {
       try {
@@ -179,7 +156,22 @@ export const App = () => {
         title={VIEW_TITLES[activeView]}
         notifications={notifications}
         selectedId={selectedId}
-        onSelect={setSelectedId}
+        onSelect={async id => {
+          if (!id) {
+            setDetails(null)
+            return
+          }
+          setSelectedId(id)
+          try {
+            const [det] = await Promise.all([
+              window.githubAPI.getDetails(selectedId),
+              window.githubAPI.markAsRead(selectedId),
+            ])
+            setDetails(det)
+          } catch (err) {
+            console.error('Failed to load details:', err)
+          }
+        }}
         onPullMore={activeView === 'inbox' ? handlePullMore : undefined}
         showPullMore={activeView === 'inbox' && notifications.length > 0}
       />
