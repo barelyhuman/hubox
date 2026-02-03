@@ -31,7 +31,9 @@ jobs:
           version: 10.19.0
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm config set node-linker hoisted
+          pnpm install --frozen-lockfile
 
       - name: Build macOS universal
         run: pnpm run make --arch=universal

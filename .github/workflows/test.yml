@@ -25,7 +25,9 @@ jobs:
           version: 10.19.0
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm config set node-linker hoisted
+          pnpm install --frozen-lockfile
 
       - name: Run tests
         run: pnpm test -- --reporter=verbose --reporter=json --reporter=html
