@@ -156,6 +156,11 @@ export const App = () => {
     await loadData()
   }
 
+  const handlePullMore = async () => {
+    await window.githubAPI.expandInboxLimit(10)
+    await loadData()
+  }
+
   if (screen === 'loading') return null
   if (screen === 'token-setup')
     return <TokenSetup onTokenSaved={handleTokenSaved} />
@@ -175,6 +180,8 @@ export const App = () => {
         notifications={notifications}
         selectedId={selectedId}
         onSelect={setSelectedId}
+        onPullMore={activeView === 'inbox' ? handlePullMore : undefined}
+        showPullMore={activeView === 'inbox' && notifications.length > 0}
       />
       <DetailPane
         notification={selected}

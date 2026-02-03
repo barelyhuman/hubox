@@ -2,7 +2,15 @@ import type { HuBoxNotification } from '../github'
 import { Icon, ICON_PATHS, TypeIcon } from './icons'
 import { relativeTime, reasonLabel } from '../lib/utils'
 
-function NotificationItem({ notification: n, selected, onSelect }: { notification: HuBoxNotification; selected: boolean; onSelect: () => void }) {
+function NotificationItem({
+  notification: n,
+  selected,
+  onSelect,
+}: {
+  notification: HuBoxNotification
+  selected: boolean
+  onSelect: () => void
+}) {
   return (
     <button
       class={`notif-item ${selected ? 'notif-item--selected' : ''} ${!n.isRead && n.unread ? 'notif-item--unread' : ''}`}
@@ -24,7 +32,21 @@ function NotificationItem({ notification: n, selected, onSelect }: { notificatio
   )
 }
 
-export function NotificationList({ title, notifications, selectedId, onSelect }: { title: string; notifications: HuBoxNotification[]; selectedId: string | null; onSelect: (id: string) => void }) {
+export function NotificationList({
+  title,
+  notifications,
+  selectedId,
+  onSelect,
+  onPullMore,
+  showPullMore,
+}: {
+  title: string
+  notifications: HuBoxNotification[]
+  selectedId: string | null
+  onSelect: (id: string) => void
+  onPullMore?: () => void
+  showPullMore?: boolean
+}) {
   return (
     <main class="list-pane">
       <div class="list-header">
@@ -37,9 +59,21 @@ export function NotificationList({ title, notifications, selectedId, onSelect }:
             <p>All caught up</p>
           </div>
         ) : (
-          notifications.map(n => (
-            <NotificationItem key={n.id} notification={n} selected={selectedId === n.id} onSelect={() => onSelect(n.id)} />
-          ))
+          <>
+            {notifications.map(n => (
+              <NotificationItem
+                key={n.id}
+                notification={n}
+                selected={selectedId === n.id}
+                onSelect={() => onSelect(n.id)}
+              />
+            ))}
+            {showPullMore && onPullMore && (
+              <button class="pull-more-btn" onClick={onPullMore}>
+                Pull More
+              </button>
+            )}
+          </>
         )}
       </div>
     </main>

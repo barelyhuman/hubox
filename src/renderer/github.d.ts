@@ -63,6 +63,7 @@ declare global {
       markAsUnread: (notificationId: string) => Promise<void>
       setPriority: (notificationId: string, priority: number) => Promise<void>
       getStats: () => Promise<NotificationStats>
+      expandInboxLimit: (additionalCount?: number) => Promise<void>
     }
   }
 }

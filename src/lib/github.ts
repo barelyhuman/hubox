@@ -122,4 +122,17 @@ export function registerGithubAPI(
     }
     return notificationManager.getStats()
   })
+
+  ipcMain.handle(
+    'github:expandInboxLimit',
+    async (event, additionalCount?: number) => {
+      if (!mainWindow || event.sender !== mainWindow.webContents) {
+        throw new Error('Unauthorized IPC call')
+      }
+      if (!notificationManager) {
+        throw new Error('Notification manager not initialized')
+      }
+      return await notificationManager.expandInboxLimit(additionalCount)
+    }
+  )
 }

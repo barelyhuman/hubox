@@ -96,7 +96,7 @@ body {
 }
 
 .sidebar-header {
-  padding: 0px 16px 12px
+  padding: 0px 16px 12px;
 }
 
 .sidebar-logo {
@@ -318,6 +318,32 @@ body {
 
 .notif-item--unread .notif-title {
   font-weight: 600;
+}
+
+.pull-more-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  width: 100%;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.pull-more-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--text-tertiary);
+  border-style: solid;
 }
 
 .type-icon {

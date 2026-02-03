@@ -34,6 +34,8 @@ const githubAPI = {
   setPriority: (notificationId: string, priority: number) =>
     ipcRenderer.invoke('github:setPriority', notificationId, priority),
   getStats: () => ipcRenderer.invoke('github:getStats'),
+  expandInboxLimit: (additionalCount?: number) =>
+    ipcRenderer.invoke('github:expandInboxLimit', additionalCount),
 }
 
 const tokenAPI = {

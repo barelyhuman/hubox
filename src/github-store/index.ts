@@ -173,22 +173,16 @@ export class NotificationManager {
   }
 
   private updateInProgressList(): void {
-    // Maintain a rolling inbox of up to `maxActive` notifications.
-    // Only include notifications that are NOT done and of type 'Issue'.
-
-    // 1. Build a sorted pool of available Issue notifications that are not done
     const availableNotDone = this.allNotifications
-      .filter(n => !n.isDone && n.subject.type === 'Issue')
+      .filter(n => !n.isDone)
       .sort(
         (a, b) =>
           new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
       )
 
-    // 2. Keep any currently active items that are still valid (not done and still exist)
     const activeSet = new Set(this.activeBatchIds)
     const remainingActive = availableNotDone.filter(n => activeSet.has(n.id))
 
-    // 3. Fill up the active list up to `maxActive` with the newest available items
     const newActive: typeof this.inProgressNotifications = [...remainingActive]
     for (const n of availableNotDone) {
       if (newActive.length >= this.maxActive) break
@@ -196,7 +190,6 @@ export class NotificationManager {
       newActive.push(n)
     }
 
-    // 4. Persist active ids and in-progress notifications
     this.activeBatchIds = newActive.map(n => n.id)
     this.inProgressNotifications = newActive
   }
@@ -440,7 +433,7 @@ export class NotificationManager {
       // Optionally mark as read on GitHub too
       try {
         await this.okit.activity.markThreadAsDone({
-          thread_id: notificationId,
+          thread_id: parseInt(notificationId, 10),
         })
       } catch (error) {
         console.error('Failed to mark as read on GitHub:', error)
@@ -478,6 +471,12 @@ export class NotificationManager {
       })
       await this.saveToStorage()
     }
+  }
+
+  async expandInboxLimit(additionalCount: number = 10): Promise<void> {
+    this.maxActive += additionalCount
+    this.updateInProgressList()
+    await this.saveToStorage()
   }
 
   getStats() {
